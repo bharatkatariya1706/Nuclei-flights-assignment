@@ -3,7 +3,8 @@
 	import FlightCard from './components/FlightCard.svelte';
 </script>
 
-<div class="bg-gray-100 p-4 font-sans">
+<!-- horizontally scrollable card component  -->
+<div class="bg-base-100 p-4 font-sans">
 	<div class="flex justify-between items-center mb-4">
 		<h2 class="heading-2">Upcoming Flights</h2>
 

@@ -24,7 +24,7 @@
 
 <!-- main container -->
 <div class="flex justify-center mt-6">
-	<div class="w-[90%] h-[122px] bg-white rounded-[8px] shadow p-4">
+	<div class="w-[90%] h-[118px] bg-base-200 rounded-[8px] shadow p-4">
 		<div class="flex h-full items-center">
 			<!-- Left-side vertical line with icon -->
 			<div class="flex flex-col items-center mr-4 relative h-full">

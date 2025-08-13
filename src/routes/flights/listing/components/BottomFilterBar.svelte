@@ -22,7 +22,8 @@
 			{#each quickFilters as filter}
 				<button
 					on:click={() => handleFilterClick(filter)}
-					class="px-4 py-2 bg-base-200 rounded-md sub-text whitespace-nowrap hover:bg-base-100 transition-colors"
+					class="px-4 py-2 bg-base-200 rounded-md sub-text
+					 whitespace-nowrap hover:bg-base-100 transition-colors"
 				>
 					{filter}
 				</button>
@@ -32,7 +33,8 @@
 		<!-- filter button -->
 		<button
 			on:click={handleSortAndFilterClick}
-			class="flex flex-col items-center justify-center bg-primary text-white px-4 py-2 w-[88px] h-[72px] hover:bg-primary-focus transition-colors"
+			class="flex flex-col items-center justify-center bg-primary
+			 text-white px-4 py-2 w-[88px] h-[72px] hover:bg-primary-focus transition-colors"
 		>
 			<FilterIcon />
 			<span class="content-2 mt-1 whitespace-nowrap">Sort & Filters</span>

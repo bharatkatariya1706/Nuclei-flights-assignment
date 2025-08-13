@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fetchFlightsCoreConfig } from '$flights/api/flights-api.js';
 	import FlightsSearchBox from '$flights/flights-common/flight-search-box/FlightsSearchBox.svelte';
 	import RecentSearches from '$flights/flights-common/recent-search-flights/RecentSearches.svelte';
 	import UpcomingFlights from '$flights/flights-common/upcoming-flights/UpcomingFlights.svelte';
@@ -12,10 +13,13 @@
 		ErrorHandling,
 		lceStore,
 		setContentLce,
+		setErrorLce,
 		setLoadingLce
 	} from '@CDNA-Technologies/svelte-vitals/error-handling';
 	import { NucleiLogger } from '@CDNA-Technologies/svelte-vitals/logger';
 	import { onMount } from 'svelte';
+	import { flightSearchStore } from '$flights/search-city/components/flightSearchStore.js';
+	import dayjs from 'dayjs';
 
 	onMount(async () => {
 		NucleiLogger.logInfo('Flights', 'Landing screen mounted');
@@ -25,9 +29,36 @@
 
 	const fetchScreenData = async () => {
 		// fetch data from api and set lce accordingly
+		
+		const configResponse = await fetchFlightsCoreConfig();
+		console.log("configuration response - ",configResponse);
+
 		// if error, setErrorLce(response.error);
-		// else, set data to lceStore and setContentLce();
-		setContentLce();
+		 if (configResponse.hasError()) {
+        setErrorLce(configResponse.error);
+    } else {
+        if (configResponse.response) {
+            // Get the default data from the API response
+            const defaults = configResponse.response.searchRequest; 
+
+         // default values
+			flightSearchStore.update(store => {
+                store.source = {
+                    locationName: defaults.src.city,
+                    iataCode: defaults.src.iataCode
+                };
+                store.destination = {
+                    locationName: defaults.des.city,
+                    iataCode: defaults.des.iataCode
+                };
+                // store.departureDate = dayjs(defaults.departDate).toDate();
+                store.travellers = defaults.guests[0].defaultValue;
+                store.travelClass = defaults.travellerclass ?? "Economy";
+                return store;
+            });
+        }
+        setContentLce();
+    }
 	};
 
 	function handleRetry() {

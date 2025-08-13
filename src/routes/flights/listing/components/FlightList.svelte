@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { flightLists } from "../ListingFlightsData.js";
+	// import { flightLists } from "../ListingFlightsData.js";
 	import FlightListCard from "./FlightListCard.svelte";
+  export let flightLists = [];
 
 </script>
 

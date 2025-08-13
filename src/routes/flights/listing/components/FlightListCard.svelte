@@ -1,6 +1,7 @@
 <script lang="ts">
 	import FreeMealIcon from '../icons/FreeMealIcon.svelte';
 	import NonRefundableIcon from '../icons/NonRefundableIcon.svelte';
+    
 
 	import RefundableIcon from '../icons/RefundableIcon.svelte';
 
@@ -27,29 +28,27 @@
             />
             <p class="content-2 mt-2 truncate">{airlinename}</p>
 
-            <!-- refundable or free meal -->
-            {#if isRefundable || isFreeMeal}
-                <div class="mt-2 flex items-center space-x-4">
-                    {#if isRefundable}
-                    <div class="flex items-center space-x-1.5 content-2 text-gray-600 whitespace-nowrap">
-                        <RefundableIcon />
-                        <span>Refundable</span>
-                    </div>
-                {:else}
-                    <div class="flex items-center space-x-1.5 content-2 text-gray-600 whitespace-nowrap">
-                        <NonRefundableIcon />
-                        <span>Non-Refundable</span>
-                    </div>
-                {/if}
-					
-                    {#if isFreeMeal}
-                        <div class="flex items-center space-x-1.5 content-2 text-gray-600 whitespace-nowrap">
-                            <FreeMealIcon />
-                            <span>Free Meals</span>
-                        </div>
-                    {/if}
-                </div>
-            {/if}
+
+            <div class="mt-2 flex items-center space-x-4">
+				
+				{#if isRefundable}
+					<div class="flex items-center space-x-1.5 content-2 text-gray-600 whitespace-nowrap">
+						<RefundableIcon />
+						<span>Refundable</span>
+					</div>
+				{:else}
+					<div class="flex items-center space-x-1.5 content-2 text-gray-600 whitespace-nowrap">
+						<NonRefundableIcon />
+						<span>Non-Refundable</span>
+					</div>
+				{/if}
+                {#if isFreeMeal}
+					<div class="flex items-center space-x-1.5 content-2 text-gray-600 whitespace-nowrap">
+						<FreeMealIcon />
+						<span>Free Meals</span>
+					</div>
+				{/if}
+            </div>
         </div>
 
         <!-- timing and duration -->
@@ -58,7 +57,7 @@
             <div class="flex-1 flex flex-col items-center">
                 <p class="card-heading">{departureTime} - {arrivalTime}</p>
                 <p class="sub-text mt-1 whitespace-nowrap">
-                    {totalDuration} | {#if isNonStop}Non-Stop{/if}
+                    {totalDuration} | {#if isNonStop}Non-Stop {:else}2 Stops {/if}
                 </p>
             </div>
 

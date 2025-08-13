@@ -11,7 +11,7 @@
 </script>
 
 <div
-	class="bg-white rounded-xl shadow-md p-3 flex items-center space-x-4 hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+	class="bg-base-200 rounded-xl shadow-md p-3 flex items-center space-x-4 hover:shadow-lg transition-shadow duration-300 cursor-pointer"
 >
 	<!-- Airline Logo -->
 	<div class="flex-shrink-0">

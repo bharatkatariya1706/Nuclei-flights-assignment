@@ -1,24 +1,37 @@
 <script lang="ts">
 	import FlightIcon from '$flights/flights-common/icons/FlightIcon.svelte';
 	import SwapIcon from '$flights/flights-common/icons/SwapIcon.svelte';
+	import { NavigatorUtils } from '@CDNA-Technologies/svelte-vitals/navigator';
+	import { base } from '$app/paths';
+	import { flightSearchStore } from '$flights/search-city/components/flightSearchStore.js';
+	
 
-	export let from = 'Bangalore';
-	export let to = 'Hyderabad';
-	export let srcIataCode = 'BLR';
-	export let destIataCode = 'HYD';
-
+	// --- Event Handlers ---
 	const handleSourceClick = () => {
 		console.log('Source clicked');
+		// Navigate to the search page, passing 'source' as the type
+		NavigatorUtils.navigateTo({
+			url: `${base}/flights/search-city?type=source&title=Search Source City`
+		});
 	};
 
 	const handleDestinationClick = () => {
 		console.log('Destination clicked');
+		// Navigate to the search page, passing 'destination' as the type
+		NavigatorUtils.navigateTo({
+			url: `${base}/flights/search-city?type=destination&title=Search Destination City`
+		});
 	};
 
 	const handleSwapButtonClick = () => {
 		console.log('Swap button clicked');
-		[from, to] = [to, from];
-		[srcIataCode, destIataCode] = [destIataCode, srcIataCode];
+		// Update the store to swap the source and destination
+		flightSearchStore.update((current) => ({
+			...current,
+			source: current.destination,
+			destination: current.source,
+			
+		}));
 	};
 </script>
 
@@ -37,8 +50,10 @@
 			<div class="flex flex-col flex-grow justify-between h-full py-1">
 				<!-- Source -->
 				<div class="flex items-center gap-2 cursor-pointer" on:click={handleSourceClick}>
-					<div class="sub-text border border-gray-400 rounded px-1.5 py-0.5">{srcIataCode}</div>
-					<div class="font-normal text-xl">{from}</div>
+					<div class="sub-text border border-gray-400 rounded px-1.5 py-0.5">
+						{$flightSearchStore.source.iataCode}
+					</div>
+					<div class="font-normal text-xl">{$flightSearchStore.source.locationName}</div>
 				</div>
 
 				<!-- Dashed line -->
@@ -46,8 +61,10 @@
 
 				<!-- Destination -->
 				<div class="flex items-center gap-2 cursor-pointer" on:click={handleDestinationClick}>
-					<div class="sub-text border border-gray-400 rounded px-1.5 py-0.5">{destIataCode}</div>
-					<div class="font-normal text-xl">{to}</div>
+					<div class="sub-text border border-gray-400 rounded px-1.5 py-0.5">
+						{$flightSearchStore.destination.iataCode}
+					</div>
+					<div class="font-normal text-xl">{$flightSearchStore.destination.locationName}</div>
 				</div>
 			</div>
 

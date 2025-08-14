@@ -1,3 +1,4 @@
+<!-- static because filter functionality logic is not implemented yet -->
 <script lang="ts">
 	import FilterIcon from '../icons/FilterIcon.svelte';
 
@@ -34,7 +35,7 @@
 		<button
 			on:click={handleSortAndFilterClick}
 			class="flex flex-col items-center justify-center bg-primary
-			 text-white px-4 py-2 w-[88px] h-[72px] hover:bg-primary-focus transition-colors"
+			 text-white px-4 py-2 w-20 h-22 hover:bg-primary-focus transition-colors"
 		>
 			<FilterIcon />
 			<span class="content-2 mt-1 whitespace-nowrap">Sort & Filters</span>

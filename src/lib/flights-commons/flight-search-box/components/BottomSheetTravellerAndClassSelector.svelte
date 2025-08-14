@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { flightSearchStore } from '$flights/search-city/components/flightSearchStore.js';
+	import { flightSearchStore } from '$flights/stores/flightSearchStore.js';
+	import { TravellerClass } from '$lib/flights-commons/messages/config.msg.js';
 	import { createEventDispatcher, onMount } from 'svelte';
-	 // Import the shared store
 
 	// --- Component State ---
 	let adults = 1;
@@ -9,23 +9,23 @@
 	let infants = 0;
 	let selectedClass = 'Economy Class';
 
-	const classOptions = ['Economy Class', 'Premium Economy Class', 'Business Class', 'First Class'];
+	const classOptions = Object.values(TravellerClass).map((value) => value + ' Class');
 	const dispatch = createEventDispatcher();
 
-	// Initialize the component's state 
+	// Initialize the component's state
 	onMount(() => {
 		const unsubscribe = flightSearchStore.subscribe((store) => {
 			adults = store.travellers;
 			selectedClass = store.travelClass + ' Class';
 		});
-		unsubscribe(); // Unsubscribe after initial read 
+		unsubscribe(); // Unsubscribe after initial read
 	});
 
 	//  Handler
 	const handleProceed = () => {
 		const totalTravellers = adults + children + infants;
 
-		// Update the shared store 
+		// Update the shared store
 		flightSearchStore.update((store) => {
 			store.travellers = totalTravellers;
 			store.travelClass = selectedClass.replace(' Class', '');
@@ -33,7 +33,7 @@
 		});
 
 		// Dispatch an event
-		
+
 		dispatch('proceed', {
 			travellers: totalTravellers,
 			travelClass: selectedClass
@@ -55,12 +55,12 @@
 				<div
 					class="flex items-center bg-base-200 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] px-1 py-1"
 				>
-					<!-- CORRECTED: Adults cannot be less than 1 -->
-					<button on:click={() => (adults = Math.max(1, adults - 1))} class="px-3 cta-text"
-						>-</button
+					<button
+						on:click={() => (adults = Math.max(1, adults - 1))}
+						class="px-3 cta-text text-primary">-</button
 					>
 					<span class="px-4 font-semibold w-10 text-center">{adults}</span>
-					<button on:click={() => adults++} class="px-3 cta-text">+</button>
+					<button on:click={() => adults++} class="px-3 cta-text text-primary">+</button>
 				</div>
 			</div>
 			<!-- Children -->
@@ -72,11 +72,12 @@
 				<div
 					class="flex items-center bg-base-200 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] px-1 py-1"
 				>
-					<button on:click={() => (children = Math.max(0, children - 1))} class="px-3 cta-text"
-						>-</button
+					<button
+						on:click={() => (children = Math.max(0, children - 1))}
+						class="px-3 cta-text text-primary">-</button
 					>
 					<span class="px-4 font-semibold w-10 text-center">{children}</span>
-					<button on:click={() => children++} class="px-3 cta-text">+</button>
+					<button on:click={() => children++} class="px-3 cta-text text-primary">+</button>
 				</div>
 			</div>
 			<!-- Infants -->
@@ -88,11 +89,12 @@
 				<div
 					class="flex items-center bg-base-200 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] px-1 py-1"
 				>
-					<button on:click={() => (infants = Math.max(0, infants-1))} class="px-3 cta-text"
-						>-</button
+					<button
+						on:click={() => (infants = Math.max(0, infants - 1))}
+						class="px-3 cta-text text-primary">-</button
 					>
 					<span class="px-4 font-semibold w-10 text-center">{infants}</span>
-					<button on:click={() => infants++} class="px-3 cta-text">+</button>
+					<button on:click={() => infants++} class="px-3 cta-text text-primary">+</button>
 				</div>
 			</div>
 		</div>

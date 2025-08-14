@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { fetchFlightsCoreConfig } from '$flights/api/flights-api.js';
-	import FlightsSearchBox from '$flights/flights-common/flight-search-box/FlightsSearchBox.svelte';
 	import RecentSearches from '$flights/flights-common/recent-search-flights/RecentSearches.svelte';
 	import UpcomingFlights from '$flights/flights-common/upcoming-flights/UpcomingFlights.svelte';
-
+	import { flightSearchStore } from '$flights/stores/flightSearchStore.js';
+	import FlightsSearchBox from '$lib/flights-commons/flight-search-box/FlightsSearchBox.svelte';
 	import { ListCouponCta } from '@CDNA-Technologies/svelte-vitals/cart/coupons';
 	import { LandingWalletCta } from '@CDNA-Technologies/svelte-vitals/cart/wallet';
 	import AppBar from '@CDNA-Technologies/svelte-vitals/components/appbar';
@@ -18,47 +18,49 @@
 	} from '@CDNA-Technologies/svelte-vitals/error-handling';
 	import { NucleiLogger } from '@CDNA-Technologies/svelte-vitals/logger';
 	import { onMount } from 'svelte';
-	import { flightSearchStore } from '$flights/search-city/components/flightSearchStore.js';
-	import dayjs from 'dayjs';
+	import { get } from 'svelte/store';
+	import { hasFetchedConfig } from '../appState.js';
 
 	onMount(async () => {
 		NucleiLogger.logInfo('Flights', 'Landing screen mounted');
-		setLoadingLce();
-		await fetchScreenData();
+
+		if (!get(hasFetchedConfig)) {
+			setLoadingLce();
+			await fetchScreenData();
+			hasFetchedConfig.set(true);
+		} else {
+			setContentLce();
+		}
 	});
 
 	const fetchScreenData = async () => {
-		// fetch data from api and set lce accordingly
-		
 		const configResponse = await fetchFlightsCoreConfig();
-		console.log("configuration response - ",configResponse);
+		console.log('Config : ', configResponse);
+		if (configResponse.hasError()) {
+			setErrorLce(configResponse.error);
+		} else {
+			if (configResponse.response) {
+				const defaults = configResponse.response.searchRequest;
 
-		// if error, setErrorLce(response.error);
-		 if (configResponse.hasError()) {
-        setErrorLce(configResponse.error);
-    } else {
-        if (configResponse.response) {
-            // Get the default data from the API response
-            const defaults = configResponse.response.searchRequest; 
-
-         // default values
-			flightSearchStore.update(store => {
-                store.source = {
-                    locationName: defaults.src.city,
-                    iataCode: defaults.src.iataCode
-                };
-                store.destination = {
-                    locationName: defaults.des.city,
-                    iataCode: defaults.des.iataCode
-                };
-                // store.departureDate = dayjs(defaults.departDate).toDate();
-                store.travellers = defaults.guests[0].defaultValue;
-                store.travelClass = defaults.travellerclass ?? "Economy";
-                return store;
-            });
-        }
-        setContentLce();
-    }
+				// Populate the main search store with default values from the API
+				flightSearchStore.update((store) => {
+					store.source = {
+						locationName: defaults.src.city,
+						iataCode: defaults.src.iataCode
+					};
+					store.destination = {
+						locationName: defaults.des.city,
+						iataCode: defaults.des.iataCode
+					};
+					store.departureDate = new Date(parseInt(defaults.departDate));
+					store.travellers =
+						defaults.guests.find((g) => g.guestType === 'ADULT')?.defaultValue || 1;
+					store.travelClass = defaults.travellerClass ?? 'Economy';
+					return store;
+				});
+			}
+			setContentLce();
+		}
 	};
 
 	function handleRetry() {

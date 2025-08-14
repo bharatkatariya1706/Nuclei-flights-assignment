@@ -3,11 +3,9 @@
 	import SearchIcon from './SearchIcon.svelte';
 	import CityCard from './CityCard.svelte';
 	import { popularCities } from './cityData.js';
-	import { flightSearchStore } from './flightSearchStore.js';
+	import { flightSearchStore } from '../../stores/flightSearchStore.js';
 	import AppBar from '@CDNA-Technologies/svelte-vitals/components/appbar';
 	import { tick } from 'svelte';
-	
-	// import { showToast } from '@CDNA-Technologies/svelte-vitals/native-bridge-util';
 
 	//title and type from the URL query parameters
 	const appBarTitle = $page.url.searchParams.get('title') ?? 'Search City';

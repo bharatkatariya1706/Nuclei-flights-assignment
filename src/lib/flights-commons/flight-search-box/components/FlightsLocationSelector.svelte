@@ -1,10 +1,9 @@
 <script lang="ts">
-	import FlightIcon from '$flights/flights-common/icons/FlightIcon.svelte';
-	import SwapIcon from '$flights/flights-common/icons/SwapIcon.svelte';
-	import { NavigatorUtils } from '@CDNA-Technologies/svelte-vitals/navigator';
 	import { base } from '$app/paths';
-	import { flightSearchStore } from '$flights/search-city/components/flightSearchStore.js';
-	
+	import { flightSearchStore } from '$flights/stores/flightSearchStore.js';
+	import FlightIcon from '$lib/flights-commons/icons/FlightIcon.svelte';
+	import SwapIcon from '$lib/flights-commons/icons/SwapIcon.svelte';
+	import { NavigatorUtils } from '@CDNA-Technologies/svelte-vitals/navigator';
 
 	// --- Event Handlers ---
 	const handleSourceClick = () => {
@@ -29,15 +28,14 @@
 		flightSearchStore.update((current) => ({
 			...current,
 			source: current.destination,
-			destination: current.source,
-			
+			destination: current.source
 		}));
 	};
 </script>
 
 <!-- main container -->
 <div class="flex justify-center mt-6">
-	<div class="w-[90%] h-[118px] bg-base-200 rounded-[8px] shadow p-4">
+	<div class="w-11/12 h-36 bg-base-200 rounded-lg shadow p-4">
 		<div class="flex h-full items-center">
 			<!-- Left-side vertical line with icon -->
 			<div class="flex flex-col items-center mr-4 relative h-full">
@@ -57,7 +55,7 @@
 				</div>
 
 				<!-- Dashed line -->
-				<div class="border-t border-dashed border-[#606574] w-full my-1" />
+				<div class="border-t border-dashed border-gray-500 w-full my-1" />
 
 				<!-- Destination -->
 				<div class="flex items-center gap-2 cursor-pointer" on:click={handleDestinationClick}>

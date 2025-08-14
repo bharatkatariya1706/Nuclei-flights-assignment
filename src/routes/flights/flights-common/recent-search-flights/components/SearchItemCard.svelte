@@ -1,6 +1,6 @@
 <script>
-	import ChevronRightIcon from '$flights/flights-common/icons/ChevronRightIcon.svelte';
-	import HistoryIcon from '$flights/flights-common/icons/HistoryIcon.svelte';
+	import ChevronRightIcon from '$lib/flights-commons/icons/ChevronRightIcon.svelte';
+	import HistoryIcon from '$lib/flights-commons/icons/HistoryIcon.svelte';
 
 	export let from = '';
 	export let to = '';
@@ -14,7 +14,7 @@
 		<div class="base-200 p-2 rounded-full">
 			<HistoryIcon />
 		</div>
-		<div class="flex-1 min-w-0">
+		<div class="flex-1">
 			<p class="card-heading truncate">
 				<span>{from}</span>
 				<span class="ml-3">{to}</span>

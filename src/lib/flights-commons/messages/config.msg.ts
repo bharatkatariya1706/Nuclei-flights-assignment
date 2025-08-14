@@ -107,9 +107,9 @@ export interface Traveller {
 }
 
 export enum TravellerClass {
-	ECONOMY = 'ECONOMY',
-	BUSINESS = 'BUSINESS',
-	PREMIUM = 'PREMIUM'
+	ECONOMY = 'Economy',
+	BUSINESS = 'Business',
+	PREMIUM = 'Premium'
 }
 
 export interface Status {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LocationPinIcon from '$flights/flights-common/icons/LocationPinIcon.svelte';
+	import LocationPinIcon from '$lib/flights-commons/icons/LocationPinIcon.svelte';
 
 	export let locationName: string;
 	export let airportDetails: string;

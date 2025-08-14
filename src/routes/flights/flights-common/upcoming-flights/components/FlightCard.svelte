@@ -1,6 +1,5 @@
 <script>
-	import ArrowRightIcon from '$flights/flights-common/icons/ArrowRightIcon.svelte';
-
+	import ArrowRightIcon from '$lib/flights-commons/icons/ArrowRightIcon.svelte';
 	export let airlineLogo = '';
 	export let from = '';
 	export let to = '';
@@ -15,7 +14,7 @@
 >
 	<!-- Airline Logo -->
 	<div class="flex-shrink-0">
-		<img class="w-[72px] h-[72px] rounded-lg object-cover" src={airlineLogo} alt="Airline Logo" />
+		<img class="w-20 h-20 rounded-lg object-cover" src={airlineLogo} alt="Airline Logo" />
 	</div>
 
 	<!-- Flight Details -->

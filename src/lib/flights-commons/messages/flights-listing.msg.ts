@@ -1,8 +1,5 @@
 import type { ErrorHandlingDetail } from '@CDNA-Technologies/svelte-vitals/messages';
-import  type{ AirportCode, AppliedSortAndFilter } from './config.msg.js';
-
-
-// import type { SpecialFeature } from './messages/flights-details.msg.js';
+import type { AirportCode, AppliedSortAndFilter } from './config.msg.js';
 
 export interface FlightListingRequest {
 	src: AirportCode;

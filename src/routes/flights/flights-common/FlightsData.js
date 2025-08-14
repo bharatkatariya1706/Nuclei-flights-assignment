@@ -1,4 +1,3 @@
-import AirAsiaLogo from "./icons/AirAsiaLogo.svelte";
 
 export const flights = [
     {

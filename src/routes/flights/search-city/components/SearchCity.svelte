@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import SearchIcon from './SearchIcon.svelte';
-	import CityCard from './CityCard.svelte';
-	import { popularCities } from './cityData.js';
-	import { flightSearchStore } from '../../stores/flightSearchStore.js';
 	import AppBar from '@CDNA-Technologies/svelte-vitals/components/appbar';
 	import { tick } from 'svelte';
+	import { flightSearchStore } from '../../stores/flightSearchStore.js';
+	import CityCard from './CityCard.svelte';
+	import { popularCities } from './cityData.js';
+	import SearchIcon from './SearchIcon.svelte';
 
 	//title and type from the URL query parameters
 	const appBarTitle = $page.url.searchParams.get('title') ?? 'Search City';
@@ -20,16 +20,12 @@
 		console.log('Searching for text');
 	};
 
-	const handleCitySelect = async(city: { locationName: string; airportDetails: string }) => {
+	const handleCitySelect = async (city: { locationName: string; airportDetails: string }) => {
 		const iataCode = city.airportDetails.split(' ')[0];
 		const newSelection = { locationName: city.locationName, iataCode: iataCode };
 
-		// Get the current store value 
-		let currentStoreValue;
-		const unsubscribe = flightSearchStore.subscribe((value) => {
-			currentStoreValue = value;
-		});
-		unsubscribe(); 
+		// Get the current store value
+		let currentStoreValue = $flightSearchStore;
 
 		// Check if the new selection matches the other city
 		if (
@@ -53,7 +49,7 @@
 		});
 
 		await tick();
-		history.back(); 
+		history.back();
 	};
 </script>
 
@@ -88,7 +84,6 @@
 			<h3 class="p-4 heading-3">Popular cities</h3>
 			<div class="divide-y divide-gray-200">
 				{#each popularCities as city}
-				
 					<div on:click={() => handleCitySelect(city)}>
 						<CityCard {...city} />
 					</div>

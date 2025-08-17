@@ -154,3 +154,16 @@ export interface ListItem {
 	descText: string;
 	iconUrl: string;
 }
+
+// formatted flights are added here to display date in flights card
+	export interface FormattedFlight {
+		airlineLogo: string;
+		airlinename: string;
+		departureTime: string;
+		airlineDuration: string;
+		totalDuration: string;
+		isNonStop: boolean;
+		ticketPrice: string;
+		isRefundable: boolean;
+		isFreeMeal: boolean;
+	}

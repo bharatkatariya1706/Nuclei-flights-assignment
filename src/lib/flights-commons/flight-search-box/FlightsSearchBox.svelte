@@ -21,7 +21,6 @@
 		NavigatorUtils.navigateTo({ url });
 	};
 
-	// const designClass='bg-primary';
 </script>
 
 <FlightsLocationSelector />
@@ -36,10 +35,5 @@
 		on:click={handleSearchButtonClick}
 	>
 		Search Flights
-	</button>
-	<!-- <PrimaryButton on:submit={() => handleSearchButtonClick()}
-       class={designClass}
-        >
-		<p>Search Flights</p>
-	</PrimaryButton> -->
+</button>
 </div>

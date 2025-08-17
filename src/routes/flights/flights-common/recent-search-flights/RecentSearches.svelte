@@ -9,9 +9,9 @@
 </div>
 
 <div
-	class="flex flex-col space-y-2 border-t border-b
-	 border-gray-200 bg-base-100 divide-y
-	  divide-gray-200 border-t border-b border-gray-200"
+	class="flex flex-col space-y-2
+	  bg-base-100 divide-y
+	  divide-gray-200"
 >
 	{#each RecentSearches as search}
 		<SearchItemCard {...search} />

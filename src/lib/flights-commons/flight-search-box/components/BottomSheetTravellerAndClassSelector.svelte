@@ -1,124 +1,156 @@
 <script lang="ts">
+	import { flightConfigStore } from '$flights/stores/flightConfigStore.js';
 	import { flightSearchStore } from '$flights/stores/flightSearchStore.js';
 	import { TravellerClass } from '$lib/flights-commons/messages/config.msg.js';
+	import {
+		getGuestLimits,
+		handleProceedAction,
+		initializeFromConfig,
+		updateAdultsCount,
+		updateChildrenCount,
+		updateInfantsCount
+	} from '$lib/flights-commons/utils/bottom-sheet-config-utils.js';
 	import { createEventDispatcher, onMount } from 'svelte';
 
-	// --- Component State ---
-	let adults = 1;
-	let children = 0;
-	let infants = 0;
-	let selectedClass = 'Economy Class';
+	// Component State
+	let adults:number;
+	let children:number;
+	let infants:number;
+	let selectedClass:string;
 
+	// Use config store for class options
 	const classOptions = Object.values(TravellerClass).map((value) => value + ' Class');
+
 	const dispatch = createEventDispatcher();
+
+	// Initialize when config is loaded
+	$: if ($flightConfigStore.isLoaded && $flightConfigStore.guests.length > 0) {
+		initializeComponent();
+	}
 
 	// Initialize the component's state
 	onMount(() => {
-		const unsubscribe = flightSearchStore.subscribe((store) => {
-			adults = store.travellers;
-			selectedClass = store.travelClass + ' Class';
-		});
-		unsubscribe(); // Unsubscribe after initial read
+		// If config is already loaded, initialize immediately
+		if ($flightConfigStore.isLoaded) {
+			initializeComponent();
+		}
 	});
 
-	//  Handler
-	const handleProceed = () => {
-		const totalTravellers = adults + children + infants;
+	function initializeComponent() {
+		const result = initializeFromConfig(flightConfigStore, flightSearchStore);
+		adults = result.adults;
+		children = result.children;
+		infants = result.infants;
+		selectedClass = result.selectedClass;
+	}
 
-		// Update the shared store
-		flightSearchStore.update((store) => {
-			store.travellers = totalTravellers;
-			store.travelClass = selectedClass.replace(' Class', '');
-			return store;
-		});
+	function getGuestLimitsLocal(guestType: string) {
+		return getGuestLimits(guestType, flightConfigStore);
+	}
+
+	// Update functions with config validation
+	function updateAdults(change: number) {
+		adults = updateAdultsCount(adults, change, flightConfigStore);
+	}
+
+	function updateChildren(change: number) {
+		children = updateChildrenCount(children, change, flightConfigStore);
+	}
+
+	function updateInfants(change: number) {
+		infants = updateInfantsCount(infants, change, flightConfigStore);
+	}
+
+	// Handler
+	const handleProceed = () => {
+		const result = handleProceedAction(adults, children, infants, selectedClass, flightSearchStore);
 
 		// Dispatch an event
-
-		dispatch('proceed', {
-			travellers: totalTravellers,
-			travelClass: selectedClass
-		});
+		dispatch('proceed', result);
 	};
 </script>
 
-<div class="flex flex-col p-4 space-y-6">
-	<!-- Traveller Selection -->
-	<div>
-		<h3 class="nav-text mb-4">Select Traveller(s)</h3>
-		<div class="space-y-4">
-			<!-- Adults -->
-			<div class="flex justify-between items-center">
-				<div>
-					<p class="card-sub-heading">Adults</p>
-					<p class="sub-text base-content-light-60">12 years and above</p>
-				</div>
-				<div
-					class="flex items-center bg-base-200 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] px-1 py-1"
-				>
-					<button
-						on:click={() => (adults = Math.max(1, adults - 1))}
-						class="px-3 cta-text text-primary">-</button
-					>
-					<span class="px-4 font-semibold w-10 text-center">{adults}</span>
-					<button on:click={() => adults++} class="px-3 cta-text text-primary">+</button>
-				</div>
-			</div>
-			<!-- Children -->
-			<div class="flex justify-between items-center">
-				<div>
-					<p class="card-sub-heading">Children</p>
-					<p class="sub-text base-content-light-60">2 to 12 years</p>
-				</div>
-				<div
-					class="flex items-center bg-base-200 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] px-1 py-1"
-				>
-					<button
-						on:click={() => (children = Math.max(0, children - 1))}
-						class="px-3 cta-text text-primary">-</button
-					>
-					<span class="px-4 font-semibold w-10 text-center">{children}</span>
-					<button on:click={() => children++} class="px-3 cta-text text-primary">+</button>
-				</div>
-			</div>
-			<!-- Infants -->
-			<div class="flex justify-between items-center">
-				<div>
-					<p class="card-sub-heading">Infants</p>
-					<p class="sub-text base-content-light-60">Less than 2 years</p>
-				</div>
-				<div
-					class="flex items-center bg-base-200 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] px-1 py-1"
-				>
-					<button
-						on:click={() => (infants = Math.max(0, infants - 1))}
-						class="px-3 cta-text text-primary">-</button
-					>
-					<span class="px-4 font-semibold w-10 text-center">{infants}</span>
-					<button on:click={() => infants++} class="px-3 cta-text text-primary">+</button>
-				</div>
+<!-- Show loading state if config not loaded -->
+{#if !$flightConfigStore.isLoaded}
+	<div class="flex justify-center p-8">
+		<div class="loading loading-spinner loading-md" />
+		<span class="ml-2">Loading...</span>
+	</div>
+{:else}
+	<div class="flex flex-col p-4 space-y-6">
+		<!-- Traveller Selection -->
+		<div>
+			<h3 class="nav-text mb-4">Select Traveller(s)</h3>
+			<div class="space-y-4">
+				<!-- Dynamic traveller categories from config -->
+				{#each $flightConfigStore.guests as guest}
+					<div class="flex justify-between items-center">
+						<div>
+							<p class="card-sub-heading">{guest.textName}</p>
+							<p class="sub-text base-content-light-60">{guest.subTextName}</p>
+						</div>
+						<div
+							class="flex items-center bg-base-200 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] px-1 py-1"
+						>
+							<button
+								on:click={() => {
+									if (guest.guestType === 'ADULT') updateAdults(-1);
+									else if (guest.guestType === 'CHILD') updateChildren(-1);
+									else if (guest.guestType === 'INFANT') updateInfants(-1);
+								}}
+								class="px-3 cta-text text-primary"
+								disabled={(guest.guestType === 'ADULT' && adults <= guest.minValue) ||
+									(guest.guestType === 'CHILD' && children <= guest.minValue) ||
+									(guest.guestType === 'INFANT' && infants <= guest.minValue)}
+							>
+								-
+							</button>
+							<span class="px-4 font-semibold w-10 text-center">
+								{guest.guestType === 'ADULT'
+									? adults
+									: guest.guestType === 'CHILD'
+									? children
+									: infants}
+							</span>
+							<button
+								on:click={() => {
+									if (guest.guestType === 'ADULT') updateAdults(1);
+									else if (guest.guestType === 'CHILD') updateChildren(1);
+									else if (guest.guestType === 'INFANT') updateInfants(1);
+								}}
+								class="px-3 cta-text text-primary"
+								disabled={(guest.guestType === 'ADULT' && adults >= guest.maxValue) ||
+									(guest.guestType === 'CHILD' && children >= guest.maxValue) ||
+									(guest.guestType === 'INFANT' && infants >= guest.maxValue)}
+							>
+								+
+							</button>
+						</div>
+					</div>
+				{/each}
 			</div>
 		</div>
-	</div>
 
-	<!-- Class Selection -->
-	<div>
-		<h3 class="nav-text mb-4">Select Class</h3>
-		<div class="space-y-3">
-			{#each classOptions as travelClass}
-				<label class="flex items-center gap-4">
-					<input
-						type="radio"
-						name="travelClass"
-						bind:group={selectedClass}
-						value={travelClass}
-						class="radio radio-primary"
-					/>
-					<span class="card-sub-heading">{travelClass}</span>
-				</label>
-			{/each}
+		<!-- Class Selection -->
+		<div>
+			<h3 class="nav-text mb-4">Select Class</h3>
+			<div class="space-y-3">
+				{#each classOptions as travelClass}
+					<label class="flex items-center gap-4">
+						<input
+							type="radio"
+							name="travelClass"
+							bind:group={selectedClass}
+							value={travelClass}
+							class="radio radio-primary"
+						/>
+						<span class="card-sub-heading">{travelClass}</span>
+					</label>
+				{/each}
+			</div>
 		</div>
-	</div>
 
-	<!-- Proceed Button -->
-	<button on:click={handleProceed} class="btn btn-primary w-full">Proceed</button>
-</div>
+		<!-- Proceed Button -->
+		<button on:click={handleProceed} class="btn btn-primary w-full">Proceed</button>
+	</div>
+{/if}

@@ -20,11 +20,13 @@
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { hasFetchedConfig } from '../appState.js';
+	import { flightConfigStore, setFlightConfig } from '$flights/stores/flightConfigStore.js';
+	import LandingAppBar from './LandingAppBar.svelte';
 
 	onMount(async () => {
 		NucleiLogger.logInfo('Flights', 'Landing screen mounted');
-
-		if (!get(hasFetchedConfig)) {
+       
+		if (!$hasFetchedConfig) {
 			setLoadingLce();
 			await fetchScreenData();
 			hasFetchedConfig.set(true);
@@ -42,7 +44,11 @@
 			if (configResponse.response) {
 				const defaults = configResponse.response.searchRequest;
 
-				// Populate the main search store with default values from the API
+				// Populate stores
+				 setFlightConfig({
+                    guests: defaults.guests || [],
+                    travellerClass: defaults.travellerClass || 'Economy'
+                });
 				flightSearchStore.update((store) => {
 					store.source = {
 						locationName: defaults.src.city,
@@ -68,87 +74,10 @@
 		fetchScreenData();
 	}
 
-	const handleBackClick = () => {
-		console.log('Back Button Clicked');
-	};
-
-	const handleMyBookingClick = (close: () => void) => {
-		console.log('My Booking Clicked');
-		close();
-	};
-
-	const handleMyTransactionClick = (close: () => void) => {
-		console.log('My transaction Clicked');
-		close();
-	};
-
-	const handleWebCheckInClick = (close: () => void) => {
-		console.log('Web CheckIn Clicked');
-		close();
-	};
-
-	const handleHelpClick = (close: () => void) => {
-		console.log('Help clicked');
-		close();
-	};
-
-	const handlePartnerHomeClick = (close: () => void) => {
-		console.log('Partner Home clicked');
-		close();
-	};
-
-	const handleSdkLogoutClick = (close: () => void) => {
-		console.log('SDK Logout clicked');
-		close();
-	};
 </script>
 
 <div class="h-screen flex flex-col">
-	<AppBar
-		title="Flights"
-		height="80px"
-		enableZIndex
-		showBackButton
-		onBackButtonClick={handleBackClick}
-	>
-		<div slot="action" class="flex flex-row items-center gap-2">
-			<LandingWalletCta />
-			<ListCouponCta />
-
-			<div class="dropdown dropdown-end">
-				<ThreeDotMenu let:closeDropDown colour="#000000">
-					<li on:click={handleMyBookingClick(closeDropDown)} class="border-t p-3 text-base-content">
-						My Bookings
-					</li>
-
-					<li
-						on:click={handleMyTransactionClick(closeDropDown)}
-						class="border-t p-3 text-base-content"
-					>
-						My Transactions
-					</li>
-					<li
-						on:click={handleWebCheckInClick(closeDropDown)}
-						class="border-t p-3 text-base-content"
-					>
-						Web Check-In
-					</li>
-					<li on:click={handleHelpClick(closeDropDown)} class="border-t p-3 text-base-content">
-						Help
-					</li>
-					<li
-						on:click={handlePartnerHomeClick(closeDropDown)}
-						class="border-t p-3 text-base-content"
-					>
-						Partner Home
-					</li>
-					<li on:click={handleSdkLogoutClick(closeDropDown)} class="border-t p-3 text-base-content">
-						SDK Logout
-					</li>
-				</ThreeDotMenu>
-			</div>
-		</div>
-	</AppBar>
+	<LandingAppBar/>
 
 	{#if $lceStore.isLoading}
 		<div class="h-screen flex flex-col justify-center">

@@ -20,9 +20,6 @@
 		travelClass = event.detail.travelClass.replace(' Class', '');
 		closeBottomSheet();
 	};
-
-	const handleClassClick = () => console.log('Class dropdown opens');
-	const handleTravellerClick = () => console.log('Traveller(s) dropdown opens');
 </script>
 
 <div class="flex flex-col mt-6 space-y-3 w-11/12 mx-auto">
